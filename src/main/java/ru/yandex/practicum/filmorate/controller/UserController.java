@@ -19,7 +19,7 @@ public class UserController {
 
     private Map<Integer, User> users = new HashMap<>();
 
-    private final static Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping
     public Collection<User> findAll() {
