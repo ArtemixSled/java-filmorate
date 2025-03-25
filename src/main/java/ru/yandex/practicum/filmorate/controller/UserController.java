@@ -17,8 +17,9 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
+    private Map<Integer, User> users = new HashMap<>();
+
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
-    Map<Integer, User> users = new HashMap<>();
 
     @GetMapping
     public Collection<User> findAll() {

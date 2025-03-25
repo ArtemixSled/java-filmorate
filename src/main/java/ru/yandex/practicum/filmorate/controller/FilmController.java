@@ -15,9 +15,9 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
 
-    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
-
     private Map<Integer, Film> films = new HashMap<>();
+
+    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
 
