@@ -21,7 +21,6 @@ public class FilmController {
 
     private static final int MAX_DESCRIPTION_LENGTH = 200;
 
-
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Стартовал метод findAll");
@@ -36,21 +35,22 @@ public class FilmController {
             String errorMessage = "название не может быть пустым";
             log.error(errorMessage);
             throw new ConditionsNotMetException(errorMessage);
-        } else if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+        }
+        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             String errorMessage = "максимальная длина описания — 200 символов";
             log.error(errorMessage);
             throw new ConditionsNotMetException(errorMessage);
-        } else if (film.getReleaseDate().isBefore(Instant.from(ZonedDateTime.of(LocalDateTime.of(1895, Month.DECEMBER, 28, 0, 0), ZoneOffset.UTC)))) {
+        }
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
             String errorMessage = "дата релиза должна быть — не раньше 28 декабря 1895 года";
             log.error(errorMessage);
             throw new ConditionsNotMetException(errorMessage);
-        } else if (film.getDuration().toMinutes() <= 0) {
+        }
+        if (film.getDuration().isNegative()) {
             String errorMessage = "продолжительность фильма должна быть положительным числом";
             log.error(errorMessage);
             throw new ConditionsNotMetException(errorMessage);
         }
-
-
         film.setId(getNextId());
         log.info("Состояние фильмов до создания: {}", films);
         films.put(film.getId(), film);
@@ -72,20 +72,22 @@ public class FilmController {
                 String errorMessage = "название не может быть пустым";
                 log.error(errorMessage);
                 throw new ConditionsNotMetException(errorMessage);
-            } else if (newFilm.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+            }
+            if (newFilm.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
                 String errorMessage = "максимальная длина описания — 200 символов";
                 log.error(errorMessage);
                 throw new ConditionsNotMetException(errorMessage);
-            } else if (newFilm.getReleaseDate().isBefore(Instant.from(ZonedDateTime.of(LocalDateTime.of(1895, Month.DECEMBER, 28, 0, 0), ZoneOffset.UTC)))) {
+            }
+            if (newFilm.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
                 String errorMessage = "дата релиза должна быть — не раньше 28 декабря 1895 года";
                 log.error(errorMessage);
                 throw new ConditionsNotMetException(errorMessage);
-            } else if (newFilm.getDuration().toMinutes() <= 0) {
+            }
+            if (newFilm.getDuration().isNegative()) {
                 String errorMessage = "продолжительность фильма должна быть положительным числом";
                 log.error(errorMessage);
                 throw new ConditionsNotMetException(errorMessage);
             }
-
             log.info("Состояние фильмов до создания: {}", films);
             films.put(newFilm.getId(), newFilm);
             log.info("Фильм создан с id: {}", newFilm.getId());

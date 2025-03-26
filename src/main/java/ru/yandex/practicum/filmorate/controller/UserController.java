@@ -36,19 +36,22 @@ public class UserController {
             String errorMessage = "электронная почта не может быть пустой и должна содержать символ @";
             log.error(errorMessage);
             throw new ConditionsNotMetException(errorMessage);
-        } else if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+        }
+        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             String errorMessage = "логин не может быть пустым и содержать пробелы";
             log.error(errorMessage);
             throw new ConditionsNotMetException(errorMessage);
-        } else if (user.getName() == null || user.getName().isBlank()) {
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             String errorMessage = "дата рождения не может быть в будущем";
             log.error(errorMessage);
             throw new ConditionsNotMetException(errorMessage);
         }
 
-        log.info("Дата рождения: {}", user.getBirthday());
+        log.info("Дата рождения установлена: {}", user.getBirthday());
 
         user.setId(getNextId());
         log.info("Состояние пользователей до создания: {}", users);
@@ -57,7 +60,6 @@ public class UserController {
         log.info("Состояние пользователей после создания: {}", users);
         return user;
     }
-
 
     @PutMapping
     public User update(@RequestBody User newUser) {
