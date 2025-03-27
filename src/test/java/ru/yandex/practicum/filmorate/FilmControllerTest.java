@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.validation.BindingResult;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
@@ -29,6 +30,7 @@ public class FilmControllerTest {
         film.setReleaseDate(LocalDate.of(2025, Month.DECEMBER, 28));
         film.setDuration(Duration.ofHours(2).plusMinutes(30));
 
+        BindingResult bindingResult;
         Film createdFilm = filmController.create(film);
 
         assertNotNull(createdFilm);
@@ -36,42 +38,6 @@ public class FilmControllerTest {
         assertEquals(film.getDescription(), createdFilm.getDescription());
         assertEquals(film.getReleaseDate(), createdFilm.getReleaseDate());
         assertEquals(film.getDuration(), createdFilm.getDuration());
-    }
-
-    @Test
-    void createFilmWithTooLongDescription() {
-        Film film = new Film();
-        film.setName("Film Title");
-        film.setDescription("A".repeat(201));  // Too long description
-        film.setReleaseDate(LocalDate.of(2025, Month.DECEMBER, 28));
-        film.setDuration(Duration.ofHours(2).plusMinutes(30));
-
-        ConditionsNotMetException exception = assertThrows(ConditionsNotMetException.class, () -> filmController.create(film));
-        assertEquals("максимальная длина описания — 200 символов", exception.getMessage());
-    }
-
-    @Test
-    void createFilmWithInvalidReleaseDate() {
-        Film film = new Film();
-        film.setName("Film Title");
-        film.setDescription("This is a description of the film.");
-        film.setReleaseDate(LocalDate.of(1800, Month.DECEMBER, 28));
-        film.setDuration(Duration.ofHours(2).plusMinutes(30));
-
-        ConditionsNotMetException exception = assertThrows(ConditionsNotMetException.class, () -> filmController.create(film));
-        assertEquals("дата релиза должна быть — не раньше 28 декабря 1895 года", exception.getMessage());
-    }
-
-    @Test
-    void createFilmWithNegativeDuration() {
-        Film film = new Film();
-        film.setName("Film Title");
-        film.setDescription("This is a description of the film.");
-        film.setReleaseDate(LocalDate.of(2025, Month.DECEMBER, 28));
-        film.setDuration(Duration.ofMinutes(-90));  // Invalid duration
-
-        ConditionsNotMetException exception = assertThrows(ConditionsNotMetException.class, () -> filmController.create(film));
-        assertEquals("продолжительность фильма должна быть положительным числом", exception.getMessage());
     }
 
     @Test

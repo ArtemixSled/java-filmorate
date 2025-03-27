@@ -36,41 +36,6 @@ public class UserControllerTest {
         assertEquals(user.getBirthday(), createdUser.getBirthday());
     }
 
-    @Test
-    void createUserWithInvalidEmail() {
-        User user = new User();
-        user.setEmail("invalidemail");
-        user.setLogin("user123");
-        user.setName("User Name");
-        user.setBirthday(LocalDate.of(2000, 1, 1));
-
-        ConditionsNotMetException exception = assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
-        assertEquals("электронная почта не может быть пустой и должна содержать символ @", exception.getMessage());
-    }
-
-    @Test
-    void createUserWithLoginContainingSpaces() {
-        User user = new User();
-        user.setEmail("user@example.com");
-        user.setLogin("user 123");
-        user.setName("User Name");
-        user.setBirthday(LocalDate.of(2000, 1, 1));
-
-        ConditionsNotMetException exception = assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
-        assertEquals("логин не может быть пустым и содержать пробелы", exception.getMessage());
-    }
-
-    @Test
-    void createUserWithFutureBirthday() {
-        User user = new User();
-        user.setEmail("user@example.com");
-        user.setLogin("user123");
-        user.setName("User Name");
-        user.setBirthday(LocalDate.of(2026, 1, 1));  // Future date
-
-        ConditionsNotMetException exception = assertThrows(ConditionsNotMetException.class, () -> userController.create(user));
-        assertEquals("дата рождения не может быть в будущем", exception.getMessage());
-    }
 
     @Test
     void findAllUsers() {

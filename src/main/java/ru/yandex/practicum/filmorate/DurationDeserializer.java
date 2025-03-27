@@ -12,5 +12,4 @@ public class DurationDeserializer extends JsonDeserializer<Duration> {
         long minutes = p.getLongValue();
         return Duration.ofMinutes(minutes);
     }
-
 }

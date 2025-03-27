@@ -9,10 +9,9 @@ import ru.yandex.practicum.filmorate.DurationDeserializer;
 import ru.yandex.practicum.filmorate.DurationSerializer;
 import java.time.Duration;
 import java.time.LocalDate;
-
-/**
- * Film.
- */
+import jakarta.validation.constraints.*;
+import ru.yandex.practicum.filmorate.validators.ValidDuration;
+import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
 
 @Getter
 @Setter
@@ -20,9 +19,17 @@ import java.time.LocalDate;
 public class Film {
 
     private Integer id;
+
+    @NotBlank(message = "Название не может быть пустым")
     private String name;
+
+    @Size(max = 200, message = "Максимальная длина описания — 200 символов")
     private String description;
+
+    @ValidReleaseDate
     private LocalDate releaseDate;
+
+    @ValidDuration(message = "Продолжительность фильма должна быть положительным числом")
     @JsonDeserialize(using = DurationDeserializer.class)
     @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
