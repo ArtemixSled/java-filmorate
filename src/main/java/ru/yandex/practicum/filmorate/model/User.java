@@ -13,13 +13,15 @@ public class User {
     @Pattern(regexp = "^(?!.*\\s).*$", message = "Логин не может содержать пробелы")
     private String login;
 
-    @NotBlank(message = "Электронная почта не может быть пустой")
-    @Email(message = "Электронная почта должна быть в правильном формате")
+    @NotNull(groups = Creation.class)
+    @NotBlank(message = "Электронная почта не может быть пустой", groups = Creation.class)
+    @Email(message = "Электронная почта должна быть в правильном формате", groups = Creation.class)
     private String email;
 
     private String name;
 
-    @PastOrPresent(message = "Дата рождения не может быть в будущем")
+    @PastOrPresent(message = "Дата рождения не может быть в будущем", groups = Creation.class)
     private LocalDate birthday;
 
+    public interface Creation {}
 }

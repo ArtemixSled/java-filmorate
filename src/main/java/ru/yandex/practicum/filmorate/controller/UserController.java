@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -26,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody @Valid User user) {
+    public User create(@RequestBody @Validated(User.Creation.class) User user) {
         log.info("Получен запрос на создание пользователя: {}", user);
 
         if (user.getName() == null || user.getName().isBlank()) {
@@ -45,11 +44,18 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody @Valid User newUser) {
+    public User update(@RequestBody User newUser) {
         log.info("Стартовал метод update с данными: {}", newUser);
 
         if (newUser.getId() == null) {
             throw new ConditionsNotMetException("Id должен быть указан");
+        }
+
+        if (newUser.getName() == null || newUser.getName().isBlank()) {
+            newUser.setName(newUser.getLogin());
+        }
+        if (newUser.getEmail() == null || newUser.getEmail().isBlank()) {
+            newUser.setEmail(users.get(newUser.getId()).getEmail());
         }
 
         if (users.containsKey(newUser.getId())) {
