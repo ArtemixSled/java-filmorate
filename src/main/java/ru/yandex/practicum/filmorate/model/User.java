@@ -9,7 +9,6 @@ public class User {
 
     private Integer id;
 
-    @NotBlank(message = "Логин не может быть пустым")
     @Pattern(regexp = "^(?!.*\\s).*$", message = "Логин не может содержать пробелы")
     private String login;
 
@@ -24,4 +23,11 @@ public class User {
     private LocalDate birthday;
 
     public interface Creation {}
+
+    public boolean isEmailValidForUpdate() {
+        if (this.email == null || this.email.trim().isEmpty()) {
+            return true;
+        }
+        return this.email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
 }

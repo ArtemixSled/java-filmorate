@@ -54,6 +54,11 @@ public class UserController {
         if (newUser.getName() == null || newUser.getName().isBlank()) {
             newUser.setName(newUser.getLogin());
         }
+
+        if (!newUser.isEmailValidForUpdate()) {
+            throw new ConditionsNotMetException("Электронная почта должна быть в правильном формате");
+        }
+
         if (newUser.getEmail() == null || newUser.getEmail().isBlank()) {
             newUser.setEmail(users.get(newUser.getId()).getEmail());
         }
@@ -66,6 +71,7 @@ public class UserController {
 
             return newUser;
         }
+
         String errorMessage = "Пользователь с id = " + newUser.getId() + " не найден";
         log.error(errorMessage);
         throw new NotFoundException(errorMessage);
