@@ -2,12 +2,16 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import jakarta.validation.constraints.*;
 
 @Data
 public class User {
 
     private Integer id;
+
+    private Set<Integer> friends = new HashSet<>();
 
     @Pattern(regexp = "^(?!.*\\s).*$", message = "Логин не может содержать пробелы")
     private String login;
@@ -29,5 +33,9 @@ public class User {
             return true;
         }
         return this.email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+
+    public Set<Integer> getFriends() {
+        return friends;
     }
 }
