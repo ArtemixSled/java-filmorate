@@ -6,7 +6,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -51,5 +53,12 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .orElse(0);
         log.info("Возвращается следующий id: {}", currentMaxId + 1);
         return ++currentMaxId;
+    }
+
+    public List<Film> getPopularFilms(int countTop) {
+        return findAll().stream()
+                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
+                .limit(countTop)
+                .collect(Collectors.toList());
     }
 }

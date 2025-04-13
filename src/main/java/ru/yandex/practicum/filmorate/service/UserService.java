@@ -44,10 +44,20 @@ public class UserService {
 
 
     public User createUser(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.create(user);
     }
 
     public User updateUser(User newUser) {
+        if (newUser.getId() == null) {
+            throw new ConditionsNotMetException("Id должен быть указан");
+        }
+
+        if (newUser.getName() == null || newUser.getName().isBlank()) {
+            newUser.setName(newUser.getLogin());
+        }
         return userStorage.update(newUser);
     }
 

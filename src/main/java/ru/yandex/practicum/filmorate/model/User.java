@@ -18,7 +18,7 @@ public class User {
 
     @NotNull(groups = Creation.class)
     @NotBlank(message = "Электронная почта не может быть пустой", groups = Creation.class)
-    @Email(message = "Электронная почта должна быть в правильном формате", groups = Creation.class)
+    @Email(message = "Электронная почта должна быть в правильном формате", groups = {Creation.class, Update.class})
     private String email;
 
     private String name;
@@ -28,12 +28,7 @@ public class User {
 
     public interface Creation {}
 
-    public boolean isEmailValidForUpdate() {
-        if (this.email == null || this.email.trim().isEmpty()) {
-            return true;
-        }
-        return this.email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
-    }
+    public interface Update {}
 
     public Set<Integer> getFriends() {
         return friends;
