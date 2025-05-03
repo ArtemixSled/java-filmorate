@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.DurationDeserializer;
 import ru.yandex.practicum.filmorate.DurationSerializer;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import jakarta.validation.constraints.*;
 import ru.yandex.practicum.filmorate.validators.ValidDuration;
 import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
@@ -19,6 +21,8 @@ import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
 public class Film {
 
     private Integer id;
+
+    private Set<User> likes = new HashSet<>();
 
     @NotBlank(message = "Название не может быть пустым")
     private String name;
