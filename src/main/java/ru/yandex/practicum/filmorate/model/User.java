@@ -17,7 +17,7 @@ public class User {
     private String login;
 
     @NotNull(groups = Creation.class)
-    @NotBlank(message = "Электронная почта не может быть пустой", groups = Creation.class)
+    @NotBlank(message = "Электронная почта не может быть пустой", groups = {Creation.class, Update.class})
     @Email(message = "Электронная почта должна быть в правильном формате", groups = {Creation.class, Update.class})
     private String email;
 
