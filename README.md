@@ -71,4 +71,3 @@ Ref: likes.film_id < films.film_id
 Ref: users.user_id < friends.user_id
 
 Ref: users.user_id < friends.friend_id
-
