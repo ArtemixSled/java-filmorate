@@ -22,6 +22,10 @@ public class Film {
 
     private Integer id;
 
+    private Set<Genre> genres = new HashSet<>();
+
+    private MpaRating MPA;
+
     private Set<User> likes = new HashSet<>();
 
     @NotBlank(message = "Название не может быть пустым")
