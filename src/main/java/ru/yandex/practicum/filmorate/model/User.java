@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import jakarta.validation.constraints.*;
 
 @Data
@@ -11,7 +11,7 @@ public class User {
 
     private Integer id;
 
-    private Set<Integer> friends = new HashSet<>();
+    private Map<Integer, FriendshipStatus> friends = new HashMap<>();
 
     @Pattern(regexp = "^(?!.*\\s).*$", message = "Логин не может содержать пробелы")
     private String login;
@@ -30,7 +30,7 @@ public class User {
 
     public interface Update {}
 
-    public Set<Integer> getFriends() {
+    public Map<Integer, FriendshipStatus> getFriends() {
         return friends;
     }
 }
