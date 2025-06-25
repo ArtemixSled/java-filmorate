@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ResourceNotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
-import java.util.Collection;
-import java.util.Set;
+import ru.yandex.practicum.filmorate.dto.NewUserRequest;
+import ru.yandex.practicum.filmorate.dto.UpdateUserRequest;
+import ru.yandex.practicum.filmorate.dto.UserDto;
+import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -22,60 +24,48 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<User> findAll() {
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserDto> findAll() {
         return userService.findAll();
     }
 
     @PostMapping
-    public User create(@RequestBody @Validated(User.Creation.class) User user) {
-        return userService.createUser(user);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto create(@Valid @RequestBody NewUserRequest userRequest) {
+        return userService.createUser(userRequest);
     }
 
     @PutMapping
-    public User update(@RequestBody @Validated(User.Update.class) User newUser) {
-        getRequiredUser(newUser.getId());
-        return userService.updateUser(newUser);
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto update(@Valid @RequestBody UpdateUserRequest req) {
+        return userService.updateUser(req.getId(), req);
     }
-
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable Integer id) {
-        return getRequiredUser(id);
-    }
-
 
     @PutMapping("/{userId}/friends/{friendId}")
-    public User addFriend(@PathVariable Integer userId, @PathVariable Integer friendId) {
-        getRequiredUser(userId);
-        getRequiredUser(friendId);
+    public UserDto addFriend(@PathVariable("userId") Integer userId, @PathVariable("friendId") Integer friendId) {
         return userService.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
-    public User deleteFriend(@PathVariable int userId, @PathVariable int friendId) {
-        getRequiredUser(userId);
-        getRequiredUser(friendId);
+    public UserDto deleteFriend(@PathVariable("userId") int userId, @PathVariable("friendId") int friendId) {
         return userService.deleteFriend(userId, friendId);
     }
 
-    @GetMapping("/{id}/friends")
-    public Set<User> getFriends(@PathVariable int id) {
-        getRequiredUser(id);
-        return userService.getFriends(id);
+    @GetMapping("/{userId}/friends")
+    public List<UserDto> getFriends(@PathVariable Integer userId) {
+        return userService.getFriends(userId);
     }
 
-
     @GetMapping("/{userId}/friends/common/{otherId}")
-    public Set<User> getMutualFriends(@PathVariable int userId, @PathVariable int otherId) {
-        getRequiredUser(userId);
-        getRequiredUser(otherId);
+    public List<UserDto> getMutualFriends(@PathVariable int userId, @PathVariable int otherId) {
+        getUserById(userId);
+        getUserById(otherId);
         return userService.getMutualFriends(userId, otherId);
     }
 
-    private User getRequiredUser(int userId) {
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            throw new ResourceNotFoundException("Не найден пользователь с id: " + userId);
-        }
-        return user;
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUserById(@PathVariable("userId") Integer userId) {
+        return userService.getUserById(userId);
     }
 }

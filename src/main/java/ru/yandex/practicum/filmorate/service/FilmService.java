@@ -1,91 +1,87 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.yandex.practicum.filmorate.dal.FilmRepository;
+import ru.yandex.practicum.filmorate.dal.UserRepository;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.NewFilmRequest;
+import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
-import java.util.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class FilmService {
 
-    private final FilmStorage filmStorage;
-
-    private final UserStorage userStorage;
+    private final FilmRepository filmRepository;
+    private final UserRepository userRepository;
+    private final FilmMapper filmMapper;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+    public FilmService(FilmRepository filmRepository,
+                       UserRepository userRepository,
+                       FilmMapper filmMapper) {
+        this.filmRepository = filmRepository;
+        this.userRepository = userRepository;
+        this.filmMapper = filmMapper;
     }
 
-    public Collection<Film> findAll() {
-        log.info("Стартовал метод findAll");
-        return filmStorage.findAll();
+    public FilmDto createFilm(NewFilmRequest filmRequest) {
+        Film film = filmMapper.toModel(filmRequest);
+        Film saved = filmRepository.save(film);
+        return filmMapper.toDto(saved);
     }
 
-    public Film createFilm(Film film) {
-        return filmStorage.create(film);
+    public FilmDto updateFilm(UpdateFilmRequest filmRequest) {
+        Film existing = filmRepository.findById(filmRequest.getId())
+                .orElseThrow(() -> new NotFoundException(
+                        "Фильм не найден: " + filmRequest.getId()));
+
+        filmMapper.updateFromRequest(filmRequest, existing);
+
+        Film updated = filmRepository.update(existing);
+
+        return filmMapper.toDto(updated);
     }
 
-    public Film updateFilm(Film newFilm) {
-        return filmStorage.update(newFilm);
+    public List<FilmDto> findAll() {
+        return filmRepository.findAll().stream()
+                .map(filmMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Film getFilmById(Integer id) {
-        return filmStorage.getFilm(id);
+    public FilmDto getFilmById(int id) {
+        Film film = filmRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Фильм не найден: " + id));
+        return filmMapper.toDto(film);
     }
 
-    public Film addLike(int userId, int filmId) {
-        User user = userStorage.findAll().stream()
-                .filter(u -> u.getId() == userId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-
-        Film film = filmStorage.findAll().stream()
-                .filter(u -> u.getId() == filmId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Фильм с id " + filmId + " не найден"));
-
-        if (film.getLikes().contains(user)) {
-            log.info("Пользователь с id {} уже поставил лайк фильму с id {}", user.getId(), filmId);
-            return film;
-        }
-
-        film.getLikes().add(user);
-        log.info("Пользователь с id {} поставил лайк фильму с id {}", user.getId(), filmId);
-
-        return film;
+    public void addLike(int filmId, int userId) {
+        filmRepository.findById(filmId)
+                .orElseThrow(() -> new NotFoundException("Фильм не найден: " + filmId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
+        filmRepository.addLike(filmId, userId);
     }
 
-    public Film deleteLike(int userId, int filmId) {
-        User user = userStorage.findAll().stream()
-                .filter(u -> u.getId() == userId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-
-        Film film = filmStorage.findAll().stream()
-                .filter(u -> u.getId() == filmId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Фильм с id " + filmId + " не найден"));
-
-        if (!film.getLikes().contains(user)) {
-            log.info("Пользователь с id {} не ставил лайк фильму с id {}", user.getId(), filmId);
-            return film;
-        }
-
-        film.getLikes().remove(user);
-        log.info("Пользователь с id {} удалил лайк с фильма с id {}", user.getId(), filmId);
-
-        return film;
+    public void removeLike(int filmId, int userId) {
+        filmRepository.findById(filmId)
+                .orElseThrow(() -> new NotFoundException("Фильм не найден: " + filmId));
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
+        filmRepository.removeLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilms(int countTop) {
-        return filmStorage.getPopularFilms(countTop);
+    public List<FilmDto> getPopularFilms(int count) {
+        return filmRepository.findPopular(count).stream()
+                .map(filmMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

@@ -3,24 +3,26 @@ package ru.yandex.practicum.filmorate.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import ru.yandex.practicum.filmorate.DurationDeserializer;
 import ru.yandex.practicum.filmorate.DurationSerializer;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import jakarta.validation.constraints.*;
 import ru.yandex.practicum.filmorate.validators.ValidDuration;
 import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
 
-@Getter
-@Setter
+
 @Data
 public class Film {
 
     private Integer id;
+
+    private Set<Genre> genres = new LinkedHashSet<>();
+
+    private MpaRating mpa;
 
     private Set<User> likes = new HashSet<>();
 
