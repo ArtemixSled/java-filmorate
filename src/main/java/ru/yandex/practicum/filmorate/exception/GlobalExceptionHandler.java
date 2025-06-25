@@ -33,6 +33,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse("NOT_FOUND", e.getMessage());
     }
 
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGenericException(final Exception e) {

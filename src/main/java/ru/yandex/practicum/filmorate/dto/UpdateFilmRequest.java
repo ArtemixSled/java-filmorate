@@ -5,16 +5,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor  // опционально, если нужен
+@Builder
 public class UpdateFilmRequest {
     @NotNull(message = "ID фильма обязателен")
     private Integer id;
@@ -37,5 +41,5 @@ public class UpdateFilmRequest {
     private MpaRatingDto mpa;
 
     @NotNull
-    private List<GenreDto> genres;
+    private List<GenreDto> genres = new ArrayList<>();
 }

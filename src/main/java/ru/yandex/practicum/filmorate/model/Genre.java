@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class Genre {
     private Integer id;
     private String name;
-
 }

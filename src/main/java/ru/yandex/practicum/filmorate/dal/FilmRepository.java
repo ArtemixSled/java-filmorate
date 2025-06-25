@@ -130,12 +130,12 @@ public class FilmRepository {
 
     public List<Film> findPopular(int count) {
         String sql =
-                "SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration, f.mpa_id "+
-                        "FROM films f "+
-                        "LEFT JOIN likes l ON f.film_id = l.film_id "+
-                        "GROUP BY f.film_id "+
-                        "ORDER BY COUNT(l.user_id) DESC "+
-                        "LIMIT ?";
+                "SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration, f.mpa_id "
+                        + "FROM films f "
+                        + "LEFT JOIN likes l ON f.film_id = l.film_id "
+                        + "GROUP BY f.film_id "
+                        + "ORDER BY COUNT(l.user_id) DESC "
+                        + "LIMIT ?";
         return jdbc.query(sql, mapper, count).stream()
                 .map(this::loadDetails)
                 .collect(Collectors.toList());
