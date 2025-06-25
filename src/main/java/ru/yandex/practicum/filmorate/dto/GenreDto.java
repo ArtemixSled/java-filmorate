@@ -10,7 +10,9 @@ public class GenreDto {
     private Integer id;
     private String name;
 
-    public GenreDto() { }
+    public GenreDto() {
+
+    }
 
     public GenreDto(Integer id, String name) {
         this.id = id;
