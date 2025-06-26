@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.dal;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
@@ -8,9 +7,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Repository
-public class UserRepository extends BaseRepository<User> {
+public class UserRepository extends BaseRepository<User> implements UserStorage {
 
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
@@ -30,7 +28,6 @@ public class UserRepository extends BaseRepository<User> {
     }
 
     public User save(User user) {
-        log.debug(">>> INSERT_SQL = [{}]", INSERT_QUERY);
         Integer id = create(
                 INSERT_QUERY,
                 user.getLogin(),

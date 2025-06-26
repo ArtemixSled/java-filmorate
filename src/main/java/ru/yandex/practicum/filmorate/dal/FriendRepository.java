@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 
 @Repository
-public class FriendRepository extends BaseRepository<User> {
+public class FriendRepository extends BaseRepository<User> implements FriendStorage {
 
     public FriendRepository(JdbcTemplate jdbc) {
         super(jdbc, User.class);

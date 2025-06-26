@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.filmorate.dal.FriendRepository;
-import ru.yandex.practicum.filmorate.dal.UserRepository;
+import ru.yandex.practicum.filmorate.dal.FriendStorage;
+import ru.yandex.practicum.filmorate.dal.UserStorage;
 import ru.yandex.practicum.filmorate.dto.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.UserDto;
@@ -22,11 +22,11 @@ import static ru.yandex.practicum.filmorate.mapper.UserMapper.mapToUserDto;
 @Slf4j
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final FriendRepository friendRepository;
+    private final UserStorage userRepository;
+    private final FriendStorage friendRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, FriendRepository friendRepository) {
+    public UserService(UserStorage userRepository, FriendStorage friendRepository) {
         this.userRepository = userRepository;
         this.friendRepository = friendRepository;
     }
@@ -110,5 +110,4 @@ public class UserService {
                 .map(UserMapper::mapToUserDto)
                 .collect(Collectors.toList());
     }
-
 }

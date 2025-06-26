@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.dto.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 
 import java.util.List;
 
@@ -41,17 +42,25 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public FilmDto getFilm(@PathVariable int id) {
+    public FilmDto getFilm(
+            @PathVariable @Positive(message = "id должен быть положительным") int id
+    ) {
         return filmService.getFilmById(id);
     }
 
     @PutMapping("/{filmId}/like/{userId}")
-    public void addLike(@PathVariable int filmId, @PathVariable int userId) {
+    public void addLike(
+            @PathVariable @Positive(message = "filmId должен быть положительным") int filmId,
+            @PathVariable @Positive(message = "userId должен быть положительным") int userId
+    ) {
         filmService.addLike(filmId, userId);
     }
 
     @DeleteMapping("/{filmId}/like/{userId}")
-    public void removeLike(@PathVariable int filmId, @PathVariable int userId) {
+    public void removeLike(
+            @PathVariable @Positive(message = "filmId должен быть положительным") int filmId,
+            @PathVariable @Positive(message = "userId должен быть положительным") int userId
+    ) {
         filmService.removeLike(filmId, userId);
     }
 

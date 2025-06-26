@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -57,9 +58,12 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/friends/common/{otherId}")
-    public List<UserDto> getMutualFriends(@PathVariable int userId, @PathVariable int otherId) {
-        getUserById(userId);
-        getUserById(otherId);
+    public List<UserDto> getMutualFriends(
+            @PathVariable @Positive(message = "userId должен быть положительным") int userId,
+            @PathVariable @Positive(message = "otherId должен быть положительным") int otherId
+    ) {
+        userService.getUserById(userId);
+        userService.getUserById(otherId);
         return userService.getMutualFriends(userId, otherId);
     }
 
