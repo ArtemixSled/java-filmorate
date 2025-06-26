@@ -40,7 +40,7 @@ public class FilmRepository {
     private static final String DELETE_LIKE_SQL =
             "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
     private static final String SELECT_POPULAR_IDS_SQL =
-            "SELECT f.film_id FROM films f LEFT JOIN likes l ON f.film_id ="+
+            "SELECT f.film_id FROM films f LEFT JOIN likes l ON f.film_id =" +
                     "l.film_id GROUP BY f.film_id ORDER BY COUNT(l.user_id) DESC LIMIT ?";
 
     private static final RowMapper<Film> FILM_ROW_MAPPER = (rs, rowNum) -> {
