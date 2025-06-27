@@ -27,11 +27,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({ResourceNotFoundException.class, NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleResourceNotFoundException(final ResourceNotFoundException e) {
-        return new ErrorResponse("Ошибка с входным параметром.", e.getMessage());
+    public ErrorResponse handleNotFound(Throwable e) {
+        return new ErrorResponse("NOT_FOUND", e.getMessage());
     }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
