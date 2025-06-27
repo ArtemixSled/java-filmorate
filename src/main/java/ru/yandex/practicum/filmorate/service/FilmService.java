@@ -14,12 +14,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MpaRating;
-import ru.yandex.practicum.filmorate.model.User;
-
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +36,7 @@ public class FilmService {
                             .map(Genre::getId)
                             .collect(Collectors.toList()));
         }
-        return toDtoWithDetails(saved.getId());
+        return getFullFilmDto(saved.getId());
     }
 
     @Transactional
@@ -57,22 +52,21 @@ public class FilmService {
                             .map(Genre::getId)
                             .collect(Collectors.toList()));
         }
-        return toDtoWithDetails(existing.getId());
+        return getFullFilmDto(existing.getId());
     }
 
     @Transactional(readOnly = true)
     public List<FilmDto> findAll() {
-        return filmRepository.findAll().stream()
-                .map(f -> toDtoWithDetails(f.getId()))
+        return filmRepository.findAllWithDetails().stream()
+                .map(filmMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public FilmDto getFilmById(int id) {
-        // выбросим 404, если нет
         filmRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Фильм не найден: " + id));
-        return toDtoWithDetails(id);
+        return getFullFilmDto(id);
     }
 
     @Transactional
@@ -96,30 +90,14 @@ public class FilmService {
     @Transactional(readOnly = true)
     public List<FilmDto> getPopularFilms(int count) {
         return filmRepository.findPopularIds(count).stream()
-                .map(this::toDtoWithDetails)
+                .map(this::getFullFilmDto)
                 .collect(Collectors.toList());
     }
 
-    private FilmDto toDtoWithDetails(int id) {
-        Film film = filmRepository.findById(id)
+    @Transactional(readOnly = true)
+    public FilmDto getFullFilmDto(int id) {
+        Film film = filmRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new NotFoundException("Фильм не найден: " + id));
-
-        MpaRating mpa = mpaRatingRepository.findById(film.getMpa().getId())
-                .orElseThrow(() -> new NotFoundException("MPA рейтинг не найден: " + film.getMpa().getId()));
-        film.setMpa(mpa);
-
-        List<Genre> genreList = filmRepository.findGenreIdsByFilmId(id).stream()
-                .map(genreId -> genreRepository.findById(genreId)
-                        .orElseThrow(() -> new NotFoundException("Жанр не найден для фильма: " + id)))
-                .collect(Collectors.toList());
-        film.setGenres(new LinkedHashSet<>(genreList));
-
-        Set<User> likes = filmRepository.findUserIdsByFilmId(id).stream()
-                .map(userRepository::findById)
-                .map(opt -> opt.orElseThrow(() -> new NotFoundException("Пользователь не найден")))
-                .collect(Collectors.toSet());
-        film.setLikes(likes);
-
         return filmMapper.toDto(film);
     }
 }

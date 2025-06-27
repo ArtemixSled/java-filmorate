@@ -30,7 +30,6 @@ public class FilmMapper {
     }
 
     public Film toModel(NewFilmRequest request) {
-        // валидация обязательного поля mpa
         if (request.getMpa() == null || request.getMpa().getId() == null) {
             throw new IllegalArgumentException("MPA рейтинг и его id обязателен");
         }
@@ -41,11 +40,9 @@ public class FilmMapper {
         film.setReleaseDate(request.getReleaseDate());
         film.setDuration(Duration.ofMinutes(request.getDuration()));
 
-        // MPA (гарантированно не null)
         MpaRating mpa = mpaRatingService.getById(request.getMpa().getId());
         film.setMpa(mpa);
 
-        // Жанры: если нет поля в запросе — пустой список; сохраняем порядок через LinkedHashSet
         List<GenreDto> genreDtos = request.getGenres() != null
                 ? request.getGenres()
                 : Collections.emptyList();
